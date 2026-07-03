@@ -22,7 +22,8 @@
 12. [Parler au backend : fetch et TanStack Query](#12-parler-au-backend--fetch-et-tanstack-query)
 13. [Mantine : les composants tout faits](#13-mantine--les-composants-tout-faits)
 14. [Structure de notre projet](#14-structure-de-notre-projet)
-15. [Glossaire](#15-glossaire)
+15. [Le routing : React Router](#15-le-routing--react-router)
+16. [Glossaire](#16-glossaire)
 
 ---
 
@@ -438,7 +439,58 @@ appelant l'API pour les données. Le serveur ne renvoie plus jamais de HTML.
 
 ---
 
-## 15. Glossaire
+## 15. Le routing : React Router
+
+Une SPA n'a qu'UNE page HTML — pourtant on veut des "pages" (/pomodoro,
+/progression...) avec des URLs propres. Le **routing** est cette
+correspondance URL → composant, gérée côté navigateur par **React Router** :
+
+```tsx
+// App.tsx — la table de routage :
+<BrowserRouter>
+  <Routes>
+    <Route element={<Layout />}>           {/* enveloppe commune */}
+      <Route path="/" element={<TasksPage />} />
+      <Route path="/pomodoro" element={<PomodoroPage />} />
+    </Route>
+  </Routes>
+</BrowserRouter>
+```
+
+Les pièces du puzzle :
+
+- **`<Route path element>`** : "à cette URL, affiche ce composant".
+- **Route parente + `<Outlet />`** : la route sans `path` (notre Layout :
+  en-tête + sidebar) enveloppe les routes enfants ; chaque page enfant
+  s'affiche à l'endroit du `<Outlet />` du parent. Le menu reste fixe,
+  seul le centre change.
+- **`<Link to="/pomodoro">`** : remplace `<a href>`. Différence cruciale :
+  un `<a>` recharge toute la page (aller-retour serveur), un `<Link>`
+  change l'URL et le composant affiché **sans aucun rechargement** —
+  c'est ça, naviguer dans une SPA.
+- **`useLocation()`** : hook qui donne l'URL courante (sert par ex. à
+  surligner l'entrée active du menu dans notre `Layout.tsx`).
+
+À noter : le backend n'est PAS consulté pour naviguer. Ces URLs
+n'existent que dans le navigateur ; seules les données (fetch) vont au
+serveur.
+
+### Piège rencontré en installant React Router (vécu !)
+
+Après un `npm install` d'un nouveau paquet **pendant que le serveur Vite
+tourne**, la page peut casser avec l'erreur `Invalid hook call...
+more than one copy of React` : le cache de pré-bundling de Vite garde une
+copie périmée de React. Remède :
+
+```bash
+rm -rf node_modules/.vite   # purger le cache
+# puis relancer npm run dev
+```
+
+Réflexe général : après toute installation de dépendance, redémarrer le
+serveur de dev.
+
+## 16. Glossaire
 
 | Terme | Définition |
 |---|---|
