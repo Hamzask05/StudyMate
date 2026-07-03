@@ -1,0 +1,8 @@
+# Fichiers systeme macOS
+.DS_Store
+
+# Logs
+*.log
+
+# PDF generes depuis les fiches Markdown (regenerables a la demande)
+Fiches de Cours/*.pdf
