@@ -1,16 +1,24 @@
 // ============================================================================
 // HomePage — l'écran d'accueil : le choix entre les deux modes de l'app
-// (voir STRUCTURE.md §0). C'est le point d'entrée de l'utilisateur.
+// (voir STRUCTURE.md §0) + un accès rapide aux programmes existants.
 // ============================================================================
 
-import { Card, Group, SimpleGrid, Stack, Text, ThemeIcon, Title } from '@mantine/core';
+import { useQuery } from '@tanstack/react-query';
+import { Badge, Card, Group, SimpleGrid, Stack, Text, ThemeIcon, Title } from '@mantine/core';
 import { IconBolt, IconTargetArrow } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
+import { fetchProgrammes } from '../api/programmes';
 
 export default function HomePage() {
   // useNavigate : hook de React Router pour naviguer depuis du code
   // (ici, au clic sur une carte) plutôt que via un <Link>.
   const navigate = useNavigate();
+
+  // Les programmes existants, pour l'accès rapide en bas de page
+  const { data: programmes } = useQuery({
+    queryKey: ['programmes'],
+    queryFn: fetchProgrammes,
+  });
 
   return (
     <Stack>
@@ -63,6 +71,41 @@ export default function HomePage() {
           </Text>
         </Card>
       </SimpleGrid>
+
+      {/* Accès rapide : reprendre un programme existant (masqué s'il n'y en a pas) */}
+      {programmes && programmes.length > 0 && (
+        <Stack gap="xs" mt="lg">
+          <Text fw={600}>Reprendre un programme</Text>
+          <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }}>
+            {programmes.map((programme) => (
+              <Card
+                key={programme.id}
+                shadow="xs"
+                padding="md"
+                radius="md"
+                withBorder
+                style={{ cursor: 'pointer' }}
+                onClick={() => navigate(`/programmes/${programme.id}`)}
+              >
+                <Text fw={600} truncate>
+                  {programme.name}
+                </Text>
+                <Group gap={6} mt="xs">
+                  <Badge
+                    variant="light"
+                    color={programme.trackingType === 'GRADES' ? 'blue' : 'teal'}
+                  >
+                    {programme.trackingType === 'GRADES' ? 'Notes /20' : 'Ressenti'}
+                  </Badge>
+                  <Badge variant="light" color="gray">
+                    {programme.targetHours} h
+                  </Badge>
+                </Group>
+              </Card>
+            ))}
+          </SimpleGrid>
+        </Stack>
+      )}
     </Stack>
   );
 }

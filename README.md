@@ -1,49 +1,146 @@
-# StudyMate
+# StudyMate — Your Study Companion
 
-Assistant de révisions : organisation de l'emploi du temps (Google Agenda),
-résumés de cours et quiz par IA, suivi de progression, tâches et minuteur
-Pomodoro.
+> A full-stack web app that helps students organize their revisions, stay focused, and actually see their progress.
 
-## Stack
+<p>
+  <img alt="Java" src="https://img.shields.io/badge/Java-21-orange" />
+  <img alt="Spring Boot" src="https://img.shields.io/badge/Spring%20Boot-3-6DB33F?logo=springboot&logoColor=white" />
+  <img alt="React" src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black" />
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" />
+  <img alt="Vite" src="https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white" />
+  <img alt="Status" src="https://img.shields.io/badge/status-in%20active%20development-blue" />
+</p>
 
-| Couche | Technologie |
-|---|---|
-| Backend | Java 21, Spring Boot 3, Spring Data JPA |
-| Base de données | H2 (développement), PostgreSQL (production) |
-| Frontend | React 18, TypeScript, Vite, Mantine, TanStack Query |
+---
 
-## Structure
+## Why I built this
+
+As a student, I've always struggled to keep my revisions structured. I bounced between a to-do app for tasks, a separate timer for focus sessions, a notes app for summaries, and a spreadsheet to track my grades — nothing talked to each other, and I never had a clear picture of whether I was actually improving.
+
+I wanted **one place** that ties it all together around a simple idea: a *study program*. So I decided to build it myself — and to use the project to teach myself full-stack development from the ground up, with a real Java backend and a modern React frontend.
+
+**StudyMate is that tool.**
+
+---
+
+## What it does
+
+StudyMate is built around **two ways to work**:
+
+- **Program mode** — create a focused study program for one or more subjects. You choose how you want to track your progress (**real grades out of 20** or a **self-assessed confidence rating**) and set an hours goal. Every tool — tasks, focus timer, revision sheets, progress chart — lives inside that program and feeds a single view of how you're doing.
+- **Spontaneous mode** — just need to revise right now? Jump straight into the tools with nothing saved. Zero setup, zero commitment.
+
+### Core features
+
+- **Study programs** grouping subjects, a progress-tracking mode, and an hours target
+- **Subjects** with custom colors, coefficients, and target grades
+- **Task lists** scoped to each program (add, check off, delete)
+- **Pomodoro focus timer** — work/break cycles, fully configurable, that **keeps running when you switch tabs or windows**, with a floating mini-widget visible across the whole app
+- **Revision sheets** — write and organize your own study notes per program
+- **Progress charts** — visualize your grades or confidence over time with an adaptive line chart
+- **Automatic time tracking** — completed focus sessions count toward your program's hours goal
+
+---
+
+## Tech stack & why
+
+| Layer | Technology | Why I chose it |
+|---|---|---|
+| **Backend** | Java 21, Spring Boot 3 | Industry-standard framework for building robust REST APIs |
+| **Persistence** | Spring Data JPA / Hibernate | Maps Java objects to the database with zero handwritten SQL |
+| **Database** | H2 (dev) → PostgreSQL (prod) | Zero-setup local development, production-ready target |
+| **Frontend** | React 19 + TypeScript + Vite | The most widely adopted frontend stack, with type safety |
+| **UI** | Mantine | Accessible, professional components out of the box |
+| **Server state** | TanStack Query | Caching, loading and error states handled cleanly |
+| **Charts** | Recharts | Declarative data visualization |
+| **Routing** | React Router | Client-side navigation for a single-page app |
+
+---
+
+## Architecture
+
+A clean separation between a REST API and a single-page frontend that communicate only through JSON.
 
 ```
-backend/           API REST Spring Boot (port 8080)
-frontend/          Interface React (port 5173)
-Fiches de Cours/   Notes de cours du projet (Spring Boot, React, ...)
-STRUCTURE.md       Architecture détaillée et roadmap
+┌─────────────────────────────┐        ┌──────────────────────────────┐      ┌──────────────┐
+│      FRONTEND (React)       │  REST  │    BACKEND (Spring Boot)     │ JPA  │   Database   │
+│  Programs · Tasks · Timer   │ ─────► │  Controllers → Repositories  │ ───► │  H2 / Postgres│
+│  Progress · Notes · Pomodoro│ ◄───── │  Entities · Validation · CORS│ ◄─── │              │
+└─────────────────────────────┘  JSON  └──────────────────────────────┘      └──────────────┘
 ```
 
-## Lancer le projet en local
+The backend follows a layered design — **Controller → (Service) → Repository → Entity** — with one self-contained package per domain (`programme`, `subject`, `task`, `pomodoro`, `progress`, `note`).
 
-Prérequis : Java 21+ et Node.js 20+.
+---
+
+## Technical highlights
+
+A few pieces I'm proud of, because they went beyond basic CRUD:
+
+- **A resilient timer** — instead of counting seconds (which browsers throttle in background tabs), the Pomodoro timer stores a target end-time and derives the remaining time from the wall clock. It stays accurate even after switching windows, and recalculates instantly when you return.
+- **Global state with React Context** — a single timer instance is shared across every page and a floating widget, so a focus session survives navigation and follows you around the app.
+- **JPA relationships** — programs link to subjects through a many-to-many join table generated by Hibernate; tasks and sessions attach to programs via foreign keys.
+- **The DTO pattern** — the API accepts request objects (e.g. a list of subject IDs) that are deliberately decoupled from the stored entities, keeping the contract explicit and the persistence layer protected.
+- **Adaptive progress tracking** — the same feature renders either a grades-out-of-20 chart or a 1–5 confidence chart depending on the program's configuration.
+
+---
+
+## Screenshots
+
+<!-- Add screenshots here, e.g. ![Home](docs/home.png) -->
+*Coming soon.*
+
+---
+
+## Getting started
+
+**Prerequisites:** Java 21+ and Node.js 20+.
 
 ```bash
-# Terminal 1 — backend (http://localhost:8080)
+# Terminal 1 — backend → http://localhost:8080
 cd backend
 ./mvnw spring-boot:run
 
-# Terminal 2 — frontend (http://localhost:5173)
+# Terminal 2 — frontend → http://localhost:5173
 cd frontend
 npm install
 npm run dev
 ```
 
-Console de la base de données (dev) : http://localhost:8080/h2-console
-(JDBC URL `jdbc:h2:file:./data/studymate`, utilisateur `sa`, mot de passe vide).
+Dev database console: `http://localhost:8080/h2-console`
+(JDBC URL `jdbc:h2:file:./data/studymate`, user `sa`, empty password).
 
-## Avancement
+---
 
-- [x] Phase 1 — Module Tâches complet (API REST + interface)
-- [ ] Phase 2 — Matières et minuteur Pomodoro
-- [ ] Phase 3 — Notes et courbe de progression
-- [ ] Phase 4 — IA : résumés de cours et quiz
-- [ ] Phase 5 — Synchronisation Google Agenda
-- [ ] Phase 6 — Dashboard et déploiement
+## Roadmap
+
+- [x] Tasks — REST API + UI
+- [x] Subjects (color, coefficient, target grade)
+- [x] Pomodoro timer (global, persistent, window-safe)
+- [x] Study programs (subjects, tracking mode, hours goal)
+- [x] Revision sheets per program
+- [x] Progress charts (grades / confidence)
+- [ ] AI features — quiz generation & course summaries (Claude API)
+- [ ] Google Calendar sync — push program sessions to your agenda
+- [ ] Deployment (frontend + backend + PostgreSQL)
+
+---
+
+## What this project taught me
+
+I started this as my **first full-stack application**, and building it end to end has been the best way to learn how the web really works:
+
+- Designing a REST API and modeling data with JPA relationships
+- Structuring a React codebase with components, hooks, and shared state
+- Connecting a frontend and backend across origins (CORS, JSON contracts, DTOs)
+- Making deliberate architecture and UX decisions, and documenting them
+
+I keep a set of study notes alongside the code (in `Fiches de Cours/`) documenting each concept I learned while building it.
+
+---
+
+## Author
+
+Built by **Hamza** — a student learning by building tools he actually wants to use.
+
+Feedback and suggestions are very welcome.
