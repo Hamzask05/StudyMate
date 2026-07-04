@@ -9,14 +9,18 @@
 // ============================================================================
 
 import { AppShell, NavLink, Title } from '@mantine/core';
-import { IconChartLine, IconClock, IconListCheck } from '@tabler/icons-react';
+import { IconBook, IconClock, IconHome, IconTargetArrow } from '@tabler/icons-react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
+import FloatingTimer from '../timer/FloatingTimer';
 
 // La liste des entrées du menu : ajouter une page = ajouter une ligne ici.
+// Tâches et Progression ne sont plus dans le menu : elles se gèrent désormais
+// à l'intérieur de chaque programme (voir ProgrammeDetailPage).
 const navItems = [
-  { label: 'Tâches', path: '/', icon: IconListCheck },
+  { label: 'Accueil', path: '/', icon: IconHome },
+  { label: 'Programmes', path: '/programmes', icon: IconTargetArrow },
+  { label: 'Matières', path: '/matieres', icon: IconBook },
   { label: 'Pomodoro', path: '/pomodoro', icon: IconClock },
-  { label: 'Progression', path: '/progression', icon: IconChartLine },
 ];
 
 export default function Layout() {
@@ -57,6 +61,9 @@ export default function Layout() {
       <AppShell.Main>
         <Outlet />
       </AppShell.Main>
+
+      {/* Pastille flottante du minuteur, présente sur toutes les pages */}
+      <FloatingTimer />
     </AppShell>
   );
 }

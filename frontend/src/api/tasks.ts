@@ -16,22 +16,22 @@ async function checkResponse(response: Response) {
   }
 }
 
-// GET /api/tasks → la liste complète
-// "async/await" : une requête réseau prend du temps ; await = "attends la
-// réponse avant de continuer". La fonction retourne une Promise<Task[]>,
-// c'est-à-dire "un futur tableau de tâches".
-export async function fetchTasks(): Promise<Task[]> {
-  const response = await fetch(API_URL);
+// GET /api/tasks → toutes les tâches, OU celles d'un programme si programmeId
+// est fourni (ajoute ?programmeId=… à l'URL, lu par le @RequestParam du back).
+export async function fetchTasks(programmeId?: number): Promise<Task[]> {
+  const url = programmeId ? `${API_URL}?programmeId=${programmeId}` : API_URL;
+  const response = await fetch(url);
   await checkResponse(response);
-  return response.json(); // le corps JSON → tableau d'objets Task
+  return response.json();
 }
 
-// POST /api/tasks → créer (le backend attribue l'id et renvoie la tâche)
-export async function createTask(title: string): Promise<Task> {
+// POST /api/tasks → créer. programmeId facultatif : rattache la tâche à un
+// programme (ou tâche libre si omis).
+export async function createTask(title: string, programmeId?: number): Promise<Task> {
   const response = await fetch(API_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title }), // objet JS → texte JSON
+    body: JSON.stringify({ title, programmeId }),
   });
   await checkResponse(response);
   return response.json();

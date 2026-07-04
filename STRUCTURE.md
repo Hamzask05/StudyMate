@@ -4,6 +4,43 @@ Plateforme web tout-en-un pour organiser, suivre et optimiser ses révisions.
 
 ---
 
+## 0. Concept central : deux modes d'utilisation
+
+Au lancement, l'utilisateur choisit un mode :
+
+```
+              Écran d'accueil
+        ┌───────────┴───────────┐
+        ▼                       ▼
+   MODE PROGRAMME         RÉVISION SPONTANÉE
+   (avec mémoire)         (sans mémoire)
+```
+
+**Mode Programme** — une unité de révision persistée qui regroupe :
+- un nom de programme,
+- une ou plusieurs matières,
+- un type de suivi de progression : notes réelles /20 (`GRADES`) OU
+  ressenti auto-évalué (`MOOD`),
+- un objectif d'heures à passer,
+- (à terme) l'ajout automatique de ses créneaux dans Google Agenda.
+Le programme relie ainsi fiches, Pomodoro, quiz et progression autour
+d'un objectif concret.
+
+**Révision spontanée** — accès direct aux mêmes outils (Pomodoro, quiz,
+fiches) mais **rien n'est enregistré** : session éphémère, sans trace.
+
+### Entité Programme (modèle de données)
+
+```
+Programme (id, name, trackingType[GRADES|MOOD], targetHours, createdAt)
+    └── @ManyToMany ──► Subject   (les matières concernées)
+```
+
+Les tâches, sessions Pomodoro et notes se rattacheront à un Programme
+(et/ou à une matière). La révision spontanée ne crée aucun Programme.
+
+---
+
 ## 1. Vue d'ensemble
 
 ```

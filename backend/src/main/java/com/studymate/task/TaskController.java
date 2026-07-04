@@ -1,6 +1,10 @@
 package com.studymate.task;
 
+import com.studymate.programme.Programme;
+import com.studymate.programme.ProgrammeRepository;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,52 +23,57 @@ import java.util.List;
 
 /**
  * Le CONTROLLER : la porte d'entrée HTTP du module tâches.
- * Son seul travail : associer des URLs à des méthodes Java.
- *   GET    /api/tasks      → all()      lister
- *   POST   /api/tasks      → create()   créer
- *   PATCH  /api/tasks/{id} → update()   modifier partiellement
- *   DELETE /api/tasks/{id} → delete()   supprimer
+ *   GET    /api/tasks[?programmeId=X] → all()   lister (toutes, ou d'un programme)
+ *   POST   /api/tasks                 → create() créer (rattachable à un programme)
+ *   PATCH  /api/tasks/{id}            → update() modifier partiellement
+ *   DELETE /api/tasks/{id}            → delete() supprimer
  */
-@RestController // composant Spring dont les méthodes répondent en JSON
-@RequestMapping("/api/tasks") // préfixe d'URL commun à toutes les méthodes de la classe
+@RestController
+@RequestMapping("/api/tasks")
 public class TaskController {
 
     private final TaskRepository repository;
+    private final ProgrammeRepository programmeRepository; // pour rattacher une tâche à un programme
 
-    // INJECTION DE DÉPENDANCES : on ne fait jamais "new TaskRepository()".
-    // Spring voit ce constructeur au démarrage et fournit lui-même le bean.
-    public TaskController(TaskRepository repository) {
+    public TaskController(TaskRepository repository, ProgrammeRepository programmeRepository) {
         this.repository = repository;
+        this.programmeRepository = programmeRepository;
     }
 
-    @GetMapping // GET /api/tasks
-    public List<Task> all() {
-        // findAll() → SELECT * FROM task ; la List<Task> retournée est
-        // convertie en tableau JSON automatiquement (par Jackson).
+    @GetMapping // GET /api/tasks  ou  GET /api/tasks?programmeId=3
+    public List<Task> all(@RequestParam(required = false) Long programmeId) {
+        // @RequestParam(required=false) : paramètre optionnel après le "?".
+        // Présent → on ne renvoie que les tâches de ce programme ;
+        // absent  → on renvoie toutes les tâches (page Tâches globale).
+        if (programmeId != null) {
+            return repository.findByProgrammeId(programmeId);
+        }
         return repository.findAll();
     }
 
     @PostMapping // POST /api/tasks
-    @ResponseStatus(HttpStatus.CREATED) // répondre 201 (créé) plutôt que 200 par défaut
-    public Task create(@Valid @RequestBody Task task) {
-        // @RequestBody : le JSON du corps de la requête → objet Task
-        // @Valid : vérifie les contraintes (@NotBlank, @Size) AVANT d'entrer
-        //          ici ; si violation → 400 automatique, la méthode ne tourne pas.
-        // save() → INSERT ; l'objet revient avec son id attribué par la BDD.
+    @ResponseStatus(HttpStatus.CREATED)
+    public Task create(@Valid @RequestBody CreateTaskRequest req) {
+        // On construit l'entité à partir du DTO (le front n'envoie qu'un
+        // programmeId, pas un objet Programme entier — fiche Relations §7).
+        Task task = new Task();
+        task.setTitle(req.title());
+        task.setDueDate(req.dueDate());
+        if (req.programmeId() != null) {
+            Programme programme = programmeRepository.findById(req.programmeId())
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.NOT_FOUND, "Programme " + req.programmeId() + " introuvable"));
+            task.setProgramme(programme);
+        }
         return repository.save(task);
     }
 
-    @PatchMapping("/{id}") // PATCH /api/tasks/5  → id = 5
+    @PatchMapping("/{id}")
     public Task update(@PathVariable Long id, @RequestBody UpdateTaskRequest changes) {
-        // @PathVariable : extrait le {id} de l'URL et le convertit en Long.
-        // findById retourne un Optional (boîte pleine ou vide, cf. fiche §7) :
-        // si vide, on lance une exception que Spring traduit en réponse 404.
         Task task = repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Tâche " + id + " introuvable"));
 
-        // Sémantique PATCH : ne modifier QUE les champs présents dans le JSON.
-        // Un champ absent arrive à null ici → on ne touche pas à l'existant.
         if (changes.title() != null) {
             task.setTitle(changes.title());
         }
@@ -73,12 +83,11 @@ public class TaskController {
         if (changes.dueDate() != null) {
             task.setDueDate(changes.dueDate());
         }
-        // save() sur un objet qui a déjà un id → UPDATE (et non INSERT)
         return repository.save(task);
     }
 
-    @DeleteMapping("/{id}") // DELETE /api/tasks/5
-    @ResponseStatus(HttpStatus.NO_CONTENT) // 204 : succès, rien à renvoyer
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
         if (!repository.existsById(id)) {
             throw new ResponseStatusException(
@@ -87,10 +96,16 @@ public class TaskController {
         repository.deleteById(id);
     }
 
-    // Le corps attendu par PATCH. Un "record" Java : classe immuable déclarée
-    // en une ligne (champs + constructeur + accesseurs générés).
-    // On utilise Boolean (objet) et non boolean (primitif) pour distinguer
-    // "champ absent du JSON" (null) de "false" envoyé volontairement.
+    // Corps attendu pour CRÉER une tâche : titre (+ échéance et programme
+    // facultatifs). programmeId à null = tâche non rattachée à un programme.
+    public record CreateTaskRequest(
+            @NotBlank(message = "Le titre est obligatoire")
+            @Size(max = 200) String title,
+            LocalDate dueDate,
+            Long programmeId) {
+    }
+
+    // Corps attendu par PATCH (modification partielle).
     public record UpdateTaskRequest(String title, Boolean done, LocalDate dueDate) {
     }
 }

@@ -1,9 +1,13 @@
 package com.studymate.task;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.studymate.programme.Programme;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -50,6 +54,21 @@ public class Task {
     // Initialisé à la création de l'objet, jamais modifié ensuite.
     private Instant createdAt = Instant.now();
 
+    /**
+     * Le programme auquel appartient la tâche (facultatif : une tâche peut
+     * exister sans programme, ex. en mode révision spontanée). @ManyToOne :
+     * "plusieurs tâches → un programme" ; Hibernate crée la colonne/clé
+     * étrangère programme_id dans la table task (fiche Relations §2-3).
+     *
+     * @JsonIgnore : on n'inclut PAS le programme dans le JSON d'une tâche
+     * (ce serait lourd et redondant). Côté front, on récupère les tâches
+     * d'un programme via le filtre ?programmeId=… au lieu de lire ce champ.
+     * LAZY : comme on ne sérialise pas le programme, inutile de le charger.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Programme programme;
+
     // ==== Getters / Setters ====
     // Hibernate et Jackson (le convertisseur JSON) passent par eux pour
     // lire/remplir l'objet. Pas de setter pour id ni createdAt : personne
@@ -85,5 +104,13 @@ public class Task {
 
     public Instant getCreatedAt() {
         return createdAt;
+    }
+
+    public Programme getProgramme() {
+        return programme;
+    }
+
+    public void setProgramme(Programme programme) {
+        this.programme = programme;
     }
 }

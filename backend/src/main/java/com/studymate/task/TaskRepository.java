@@ -2,6 +2,8 @@ package com.studymate.task;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 /**
  * Le REPOSITORY : notre accès à la base de données.
  *
@@ -19,4 +21,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * depuis le NOM, ex :  List<Task> findByDone(boolean done);  → WHERE done = ?
  */
 public interface TaskRepository extends JpaRepository<Task, Long> {
+
+    // Requête dérivée du NOM : Spring génère
+    // "SELECT * FROM task WHERE programme_id = ?" à partir de ce nom.
+    List<Task> findByProgrammeId(Long programmeId);
 }

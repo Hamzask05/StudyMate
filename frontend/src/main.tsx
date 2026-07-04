@@ -16,6 +16,7 @@ import { MantineProvider } from '@mantine/core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import App from './App.tsx';
+import { PomodoroProvider } from './context/PomodoroContext';
 
 // Le "client" TanStack Query : l'objet qui gère le cache de toutes les
 // données venues du backend (tâches, notes...). Créé une seule fois.
@@ -30,7 +31,11 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <MantineProvider>
       <QueryClientProvider client={queryClient}>
-        <App />
+        {/* PomodoroProvider : le minuteur global, sous QueryClient (il
+            enregistre les sessions) et au-dessus de l'app entière. */}
+        <PomodoroProvider>
+          <App />
+        </PomodoroProvider>
       </QueryClientProvider>
     </MantineProvider>
   </StrictMode>,
