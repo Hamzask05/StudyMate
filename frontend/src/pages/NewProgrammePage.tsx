@@ -6,6 +6,7 @@
 
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useDisclosure } from '@mantine/hooks';
 import {
   Alert,
   Button,
@@ -19,10 +20,12 @@ import {
   TextInput,
   Title,
 } from '@mantine/core';
+import { IconPlus } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { fetchSubjects } from '../api/subjects';
 import { createProgramme } from '../api/programmes';
 import type { TrackingType } from '../types/programme';
+import SubjectCreateModal from '../components/SubjectCreateModal';
 
 export default function NewProgrammePage() {
   const navigate = useNavigate();
@@ -33,6 +36,9 @@ export default function NewProgrammePage() {
   const [subjectIds, setSubjectIds] = useState<string[]>([]); // MultiSelect = strings
   const [trackingType, setTrackingType] = useState<TrackingType>('GRADES');
   const [targetHours, setTargetHours] = useState<number>(10);
+
+  // Ouverture/fermeture de la popup de création de matière
+  const [subjectModalOpened, subjectModal] = useDisclosure(false);
 
   // On a besoin de la liste des matières pour les proposer au choix
   const { data: subjects } = useQuery({
@@ -56,9 +62,17 @@ export default function NewProgrammePage() {
 
       {noSubjects && (
         <Alert color="yellow" mt="md" title="Aucune matière">
-          Crée d'abord au moins une matière dans l'onglet Matières.
+          Aucune matière pour l'instant — crée-en une avec le bouton « Nouvelle
+          matière » ci-dessous.
         </Alert>
       )}
+
+      {/* La popup de création de matière ; la nouvelle est auto-sélectionnée */}
+      <SubjectCreateModal
+        opened={subjectModalOpened}
+        onClose={subjectModal.close}
+        onCreated={(subject) => setSubjectIds((ids) => [...ids, String(subject.id)])}
+      />
 
       <form
         onSubmit={(e) => {
@@ -82,17 +96,29 @@ export default function NewProgrammePage() {
             required
           />
 
-          <MultiSelect
-            label="Matière(s) concernée(s)"
-            placeholder="Choisis une ou plusieurs matières"
-            data={(subjects ?? []).map((s) => ({
-              value: String(s.id),
-              label: s.name,
-            }))}
-            value={subjectIds}
-            onChange={setSubjectIds}
-            searchable
-          />
+          <div>
+            <Group justify="space-between" align="flex-end" mb={4}>
+              <Text size="sm" fw={500}>Matière(s) concernée(s)</Text>
+              <Button
+                variant="subtle"
+                size="compact-sm"
+                leftSection={<IconPlus size={14} />}
+                onClick={subjectModal.open}
+              >
+                Nouvelle matière
+              </Button>
+            </Group>
+            <MultiSelect
+              placeholder="Choisis une ou plusieurs matières"
+              data={(subjects ?? []).map((s) => ({
+                value: String(s.id),
+                label: s.name,
+              }))}
+              value={subjectIds}
+              onChange={setSubjectIds}
+              searchable
+            />
+          </div>
 
           <div>
             <Text size="sm" fw={500} mb={4}>

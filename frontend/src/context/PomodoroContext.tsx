@@ -71,6 +71,8 @@ interface PomodoroContextValue {
   setSettings: (s: PomodoroSettings) => void;
   attached: AttachedProgramme | null;
   attachToProgramme: (p: AttachedProgramme | null) => void;
+  focusMode: boolean; // affichage plein écran (mode concentration)
+  setFocusMode: (on: boolean) => void;
   start: () => void;
   pause: () => void;
   skip: () => void;
@@ -95,6 +97,7 @@ export function PomodoroProvider({ children }: { children: ReactNode }) {
   const [completedSessions, setCompletedSessions] = useState(0);
   const [secondsLeft, setSecondsLeft] = useState(DEFAULT_SETTINGS.workMin * 60);
   const [attached, setAttached] = useState<AttachedProgramme | null>(null);
+  const [focusMode, setFocusMode] = useState(false);
 
   // endTimeRef : horodatage (ms) de fin de la phase en cours quand ça tourne.
   const endTimeRef = useRef<number | null>(null);
@@ -259,6 +262,8 @@ export function PomodoroProvider({ children }: { children: ReactNode }) {
     setSettings,
     attached,
     attachToProgramme,
+    focusMode,
+    setFocusMode,
     start,
     pause,
     skip,

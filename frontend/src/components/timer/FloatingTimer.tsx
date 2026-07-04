@@ -16,8 +16,9 @@ export default function FloatingTimer() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Rien à montrer si le minuteur est "neuf" (jamais lancé / remis à zéro)
-  if (timer.isIdle) return null;
+  // Rien à montrer si le minuteur est "neuf", ou si le mode focus est actif
+  // (dans ce cas l'overlay plein écran prend le relais)
+  if (timer.isIdle || timer.focusMode) return null;
 
   const meta = PHASE_META[timer.phase];
   // Page "propriétaire" du minuteur : le programme rattaché, sinon /pomodoro
@@ -28,46 +29,56 @@ export default function FloatingTimer() {
 
   return (
     <Paper
-      shadow="md"
-      p="xs"
-      radius="md"
+      shadow="lg"
+      p="md"
+      radius="lg"
       withBorder
-      style={{ position: 'fixed', bottom: 16, right: 16, zIndex: 300 }}
+      // Plus grande et centrée horizontalement en bas de l'écran
+      style={{
+        position: 'fixed',
+        bottom: 24,
+        left: '50%',
+        transform: 'translateX(-50%)',
+        zIndex: 300,
+      }}
     >
-      <Group gap="xs" wrap="nowrap">
+      <Group gap="md" wrap="nowrap">
         <RingProgress
-          size={44}
-          thickness={4}
+          size={64}
+          thickness={5}
+          roundCaps
           sections={[
             { value: (1 - timer.secondsLeft / timer.totalSeconds) * 100, color: meta.color },
           ]}
           label={
-            <Text ta="center" size="9px" fw={700} ff="monospace">
+            <Text ta="center" size="12px" fw={700} ff="monospace">
               {formatTime(timer.secondsLeft)}
             </Text>
           }
         />
         <div>
-          <Text size="sm" fw={600}>{meta.label}</Text>
-          <Text size="xs" c="dimmed">
+          <Text fw={600}>{meta.label}</Text>
+          <Text size="sm" c="dimmed">
             {timer.attached ? timer.attached.name : 'Mode libre'}
           </Text>
         </div>
         <ActionIcon
+          size="lg"
           variant="light"
           color={meta.color}
           onClick={timer.isRunning ? timer.pause : timer.start}
           aria-label={timer.isRunning ? 'Pause' : 'Reprendre'}
         >
-          {timer.isRunning ? <IconPlayerPause size={16} /> : <IconPlayerPlay size={16} />}
+          {timer.isRunning ? <IconPlayerPause size={18} /> : <IconPlayerPlay size={18} />}
         </ActionIcon>
         <ActionIcon
+          size="lg"
           variant="subtle"
           color="gray"
           onClick={() => navigate(target)}
           aria-label="Ouvrir le minuteur"
         >
-          <IconArrowUpRight size={16} />
+          <IconArrowUpRight size={18} />
         </ActionIcon>
       </Group>
     </Paper>

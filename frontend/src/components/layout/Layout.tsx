@@ -12,6 +12,7 @@ import { AppShell, NavLink, Title } from '@mantine/core';
 import { IconBook, IconClock, IconHome, IconTargetArrow } from '@tabler/icons-react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import FloatingTimer from '../timer/FloatingTimer';
+import FocusOverlay from '../timer/FocusOverlay';
 
 // La liste des entrées du menu : ajouter une page = ajouter une ligne ici.
 // Tâches et Progression ne sont plus dans le menu : elles se gèrent désormais
@@ -64,6 +65,9 @@ export default function Layout() {
 
       {/* Pastille flottante du minuteur, présente sur toutes les pages */}
       <FloatingTimer />
+
+      {/* Mode focus plein écran (par-dessus tout quand activé) */}
+      <FocusOverlay />
     </AppShell>
   );
 }

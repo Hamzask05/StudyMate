@@ -16,6 +16,7 @@ import {
   Text,
 } from '@mantine/core';
 import {
+  IconMaximize,
   IconPlayerPause,
   IconPlayerPlay,
   IconPlayerSkipForward,
@@ -111,6 +112,22 @@ export default function PomodoroTimer({ showSettings = true, ringSize = 230 }: P
           <Text c="dimmed" size="sm">
             Sessions de travail terminées : {timer.completedSessions} (pause longue toutes les 4)
           </Text>
+
+          {/* Mode focus : agrandit le minuteur en plein écran */}
+          <Button
+            variant="subtle"
+            color="gray"
+            size="xs"
+            leftSection={<IconMaximize size={16} />}
+            onClick={() => {
+              timer.setFocusMode(true);
+              // Demande du vrai plein écran ICI (dans le geste utilisateur, requis
+              // par le navigateur). En cas d'échec, l'overlay remplit quand même l'écran.
+              document.documentElement.requestFullscreen?.().catch(() => {});
+            }}
+          >
+            Mode focus (plein écran)
+          </Button>
         </Stack>
       </Center>
 
