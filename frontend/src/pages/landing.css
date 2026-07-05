@@ -1,0 +1,40 @@
+/* Styles de la page d'accueil marketing (landing SaaS). */
+
+.landing-hero {
+  background:
+    radial-gradient(55% 55% at 50% 0%, rgba(124, 58, 237, 0.12), transparent 70%),
+    linear-gradient(180deg, #faf5ff 0%, #ffffff 70%);
+}
+
+.landing-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: saturate(180%) blur(8px);
+  background: rgba(255, 255, 255, 0.8);
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+
+/* Léger soulèvement au survol des cartes de fonctionnalités */
+.feature-card {
+  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+}
+.feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--mantine-shadow-md);
+  border-color: var(--mantine-color-brand-3);
+}
+
+.cta-band {
+  background: linear-gradient(135deg, #6d28d9 0%, #7c3aed 50%, #059669 160%);
+}
+
+/* Respect de la préférence "réduire les animations" (accessibilité) */
+@media (prefers-reduced-motion: reduce) {
+  .feature-card {
+    transition: none;
+  }
+  .feature-card:hover {
+    transform: none;
+  }
+}

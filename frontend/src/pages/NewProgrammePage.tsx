@@ -161,7 +161,7 @@ export default function NewProgrammePage() {
             >
               Créer le programme
             </Button>
-            <Button variant="subtle" color="gray" onClick={() => navigate('/')}>
+            <Button variant="subtle" color="gray" onClick={() => navigate('/app')}>
               Annuler
             </Button>
           </Group>

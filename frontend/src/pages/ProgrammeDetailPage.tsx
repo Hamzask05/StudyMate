@@ -29,6 +29,7 @@ import { createTask, deleteTask, fetchTasks, updateTask } from '../api/tasks';
 import TaskItem from '../components/TaskItem';
 import ProgressSection from '../components/ProgressSection';
 import RevisionNotes from '../components/RevisionNotes';
+import Deadlines from '../components/Deadlines';
 import PomodoroTimer from '../components/timer/PomodoroTimer';
 import { usePomodoroTimer } from '../context/PomodoroContext';
 
@@ -202,6 +203,12 @@ export default function ProgrammeDetailPage() {
           </Card>
         </Stack>
       </SimpleGrid>
+
+      {/* Échéances (pleine largeur) */}
+      <Card shadow="sm" padding="lg" radius="md" withBorder>
+        <Title order={4} mb="sm">Échéances</Title>
+        <Deadlines programmeId={programme.id} />
+      </Card>
 
       {/* Fiches de révision (pleine largeur, sous la grille) */}
       <Card shadow="sm" padding="lg" radius="md" withBorder>

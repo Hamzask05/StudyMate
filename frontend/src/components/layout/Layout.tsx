@@ -8,8 +8,8 @@
 // (/ → TasksPage, /pomodoro → PomodoroPage, ...).
 // ============================================================================
 
-import { AppShell, NavLink, Title } from '@mantine/core';
-import { IconBook, IconClock, IconHome, IconTargetArrow } from '@tabler/icons-react';
+import { AppShell, Group, NavLink, Text, ThemeIcon } from '@mantine/core';
+import { IconBook, IconCalendarEvent, IconClock, IconHome, IconTargetArrow } from '@tabler/icons-react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import FloatingTimer from '../timer/FloatingTimer';
 import FocusOverlay from '../timer/FocusOverlay';
@@ -18,8 +18,9 @@ import FocusOverlay from '../timer/FocusOverlay';
 // Tâches et Progression ne sont plus dans le menu : elles se gèrent désormais
 // à l'intérieur de chaque programme (voir ProgrammeDetailPage).
 const navItems = [
-  { label: 'Accueil', path: '/', icon: IconHome },
+  { label: 'Accueil', path: '/app', icon: IconHome },
   { label: 'Programmes', path: '/programmes', icon: IconTargetArrow },
+  { label: 'Échéances', path: '/echeances', icon: IconCalendarEvent },
   { label: 'Matières', path: '/matieres', icon: IconBook },
   { label: 'Pomodoro', path: '/pomodoro', icon: IconClock },
 ];
@@ -39,7 +40,15 @@ export default function Layout() {
       padding="lg"
     >
       <AppShell.Header p="md">
-        <Title order={3}>StudyMate</Title>
+        {/* Logo cliquable vers l'accueil de l'app */}
+        <Link to="/app" style={{ textDecoration: 'none', color: 'inherit', width: 'fit-content' }}>
+          <Group gap={8}>
+            <ThemeIcon size={26} radius="md" variant="gradient" gradient={{ from: 'brand.6', to: 'success.6', deg: 135 }}>
+              <IconBook size={16} />
+            </ThemeIcon>
+            <Text fw={800} fz="lg">StudyMate</Text>
+          </Group>
+        </Link>
       </AppShell.Header>
 
       <AppShell.Navbar p="sm">
