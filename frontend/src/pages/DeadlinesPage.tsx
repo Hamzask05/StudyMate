@@ -22,9 +22,10 @@ import {
   TextInput,
   Title,
 } from '@mantine/core';
-import { IconPlus, IconTrash } from '@tabler/icons-react';
+import { IconCalendarEvent, IconPlus, IconTrash } from '@tabler/icons-react';
 import { createDeadline, deleteDeadline, fetchAllDeadlines } from '../api/deadlines';
 import { fetchProgrammes } from '../api/programmes';
+import EmptyState from '../components/EmptyState';
 import type { Importance } from '../types/deadline';
 
 const IMPORTANCE_META: Record<Importance, { label: string; color: string }> = {
@@ -175,8 +176,17 @@ export default function DeadlinesPage() {
 
       {isPending && <Loader />}
 
-      {deadlines && deadlines.length === 0 && (
-        <Text c="dimmed">Aucune échéance pour l'instant.</Text>
+      {deadlines && deadlines.length === 0 && !showForm && (
+        <EmptyState
+          icon={IconCalendarEvent}
+          title="Aucune échéance"
+          description="Ajoute tes examens et rendus pour les garder en vue, classés par date et importance."
+          action={
+            <Button leftSection={<IconPlus size={16} />} onClick={() => setShowForm(true)}>
+              Nouvelle échéance
+            </Button>
+          }
+        />
       )}
 
       {/* Liste de toutes les échéances (triées par date côté backend) */}
@@ -207,7 +217,7 @@ export default function DeadlinesPage() {
                           {timeLabel}
                         </Badge>
                         {deadline.programmeName && (
-                          <Badge size="sm" variant="dot" color="blue">
+                          <Badge size="sm" variant="dot" color="brand">
                             {deadline.programmeName}
                           </Badge>
                         )}

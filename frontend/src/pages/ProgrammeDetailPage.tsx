@@ -4,7 +4,7 @@
 // un accès Pomodoro, et sa progression (selon le mode de suivi choisi).
 // ============================================================================
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   ActionIcon,
@@ -19,9 +19,19 @@ import {
   Stack,
   Text,
   TextInput,
+  ThemeIcon,
   Title,
 } from '@mantine/core';
-import { IconArrowLeft, IconPlus } from '@tabler/icons-react';
+import {
+  IconArrowLeft,
+  IconCalendarEvent,
+  IconChartLine,
+  IconChecklist,
+  IconClock,
+  IconNotes,
+  IconPlus,
+  type Icon,
+} from '@tabler/icons-react';
 import { Link, useParams } from 'react-router-dom';
 import { fetchProgramme } from '../api/programmes';
 import { fetchSessions } from '../api/pomodoroSessions';
@@ -32,6 +42,21 @@ import RevisionNotes from '../components/RevisionNotes';
 import Deadlines from '../components/Deadlines';
 import PomodoroTimer from '../components/timer/PomodoroTimer';
 import { usePomodoroTimer } from '../context/PomodoroContext';
+
+// En-tête de section réutilisable : petite icône de marque + titre (+ contenu à droite)
+function SectionTitle({ icon: IconCmp, children, right }: { icon: Icon; children: ReactNode; right?: ReactNode }) {
+  return (
+    <Group justify="space-between" mb="sm">
+      <Group gap="xs">
+        <ThemeIcon size={28} radius="md" variant="light">
+          <IconCmp size={16} />
+        </ThemeIcon>
+        <Title order={4}>{children}</Title>
+      </Group>
+      {right}
+    </Group>
+  );
+}
 
 export default function ProgrammeDetailPage() {
   // useParams : récupère le :id de l'URL (toujours une chaîne) → number
@@ -113,7 +138,7 @@ export default function ProgrammeDetailPage() {
         <Title order={2}>{programme.name}</Title>
       </Group>
       <Group gap="xs">
-        <Badge variant="light" color={programme.trackingType === 'GRADES' ? 'blue' : 'teal'}>
+        <Badge variant="light" color={programme.trackingType === 'GRADES' ? 'brand' : 'teal'}>
           {programme.trackingType === 'GRADES' ? 'Suivi par notes /20' : 'Suivi par ressenti'}
         </Badge>
         <Badge variant="light" color="gray">
@@ -128,15 +153,15 @@ export default function ProgrammeDetailPage() {
 
       <SimpleGrid cols={{ base: 1, md: 2 }}>
         {/* ---- Bloc Tâches du programme ---- */}
-        <Card shadow="sm" padding="lg" radius="md" withBorder>
-          <Group justify="space-between">
-            <Title order={4}>Tâches</Title>
-            {totalCount > 0 && (
-              <Text c="dimmed" size="sm">
-                {doneCount}/{totalCount} faites
-              </Text>
-            )}
-          </Group>
+        <Card shadow="sm" padding="lg" radius="lg" withBorder>
+          <SectionTitle
+            icon={IconChecklist}
+            right={totalCount > 0 ? (
+              <Text c="dimmed" size="sm">{doneCount}/{totalCount} faites</Text>
+            ) : undefined}
+          >
+            Tâches
+          </SectionTitle>
 
           <form
             onSubmit={(e) => {
@@ -177,8 +202,8 @@ export default function ProgrammeDetailPage() {
 
         {/* ---- Bloc Outils / Progression ---- */}
         <Stack>
-          <Card shadow="sm" padding="lg" radius="md" withBorder>
-            <Title order={4}>Temps de révision</Title>
+          <Card shadow="sm" padding="lg" radius="lg" withBorder>
+            <SectionTitle icon={IconClock}>Temps de révision</SectionTitle>
             <Group justify="space-between" mt="sm">
               <Text size="sm" fw={500}>
                 {hoursDone.toFixed(1)} h / {programme.targetHours} h
@@ -194,8 +219,8 @@ export default function ProgrammeDetailPage() {
             <PomodoroTimer showSettings={false} ringSize={180} />
           </Card>
 
-          <Card shadow="sm" padding="lg" radius="md" withBorder>
-            <Title order={4} mb="sm">Progression</Title>
+          <Card shadow="sm" padding="lg" radius="lg" withBorder>
+            <SectionTitle icon={IconChartLine}>Progression</SectionTitle>
             <ProgressSection
               programmeId={programme.id}
               trackingType={programme.trackingType}
@@ -205,14 +230,14 @@ export default function ProgrammeDetailPage() {
       </SimpleGrid>
 
       {/* Échéances (pleine largeur) */}
-      <Card shadow="sm" padding="lg" radius="md" withBorder>
-        <Title order={4} mb="sm">Échéances</Title>
+      <Card shadow="sm" padding="lg" radius="lg" withBorder>
+        <SectionTitle icon={IconCalendarEvent}>Échéances</SectionTitle>
         <Deadlines programmeId={programme.id} />
       </Card>
 
       {/* Fiches de révision (pleine largeur, sous la grille) */}
-      <Card shadow="sm" padding="lg" radius="md" withBorder>
-        <Title order={4} mb="sm">Fiches de révision</Title>
+      <Card shadow="sm" padding="lg" radius="lg" withBorder>
+        <SectionTitle icon={IconNotes}>Fiches de révision</SectionTitle>
         <RevisionNotes programmeId={programme.id} />
       </Card>
     </Stack>

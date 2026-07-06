@@ -32,7 +32,7 @@ export function formatTime(totalSeconds: number): string {
 }
 
 export const PHASE_META: Record<Phase, { label: string; color: string }> = {
-  work: { label: 'Travail', color: 'blue' },
+  work: { label: 'Travail', color: 'brand' },
   shortBreak: { label: 'Pause courte', color: 'teal' },
   longBreak: { label: 'Pause longue', color: 'indigo' },
 };

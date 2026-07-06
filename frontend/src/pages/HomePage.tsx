@@ -1,47 +1,57 @@
 // ============================================================================
-// HomePage — l'écran d'accueil : le choix entre les deux modes de l'app
-// (voir STRUCTURE.md §0) + un accès rapide aux programmes existants.
+// HomePage — l'accueil de l'application (/app) : le choix entre les deux
+// modes + un accès rapide aux programmes existants.
 // ============================================================================
 
 import { useQuery } from '@tanstack/react-query';
-import { Badge, Card, Group, SimpleGrid, Stack, Text, ThemeIcon, Title } from '@mantine/core';
-import { IconBolt, IconTargetArrow } from '@tabler/icons-react';
+import {
+  Badge,
+  Card,
+  Group,
+  SimpleGrid,
+  Stack,
+  Text,
+  ThemeIcon,
+  Title,
+} from '@mantine/core';
+import { IconArrowRight, IconBolt, IconTargetArrow } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { fetchProgrammes } from '../api/programmes';
 
 export default function HomePage() {
-  // useNavigate : hook de React Router pour naviguer depuis du code
-  // (ici, au clic sur une carte) plutôt que via un <Link>.
   const navigate = useNavigate();
 
-  // Les programmes existants, pour l'accès rapide en bas de page
   const { data: programmes } = useQuery({
     queryKey: ['programmes'],
     queryFn: fetchProgrammes,
   });
 
   return (
-    <Stack>
+    <Stack gap="xl">
       <div>
         <Title order={2}>Bonjour</Title>
         <Text c="dimmed">Comment veux-tu réviser aujourd'hui ?</Text>
       </div>
 
-      <SimpleGrid cols={{ base: 1, sm: 2 }} mt="sm">
-        {/* Carte 1 : mode programme (avec mémoire) */}
+      {/* ---- Les deux modes ---- */}
+      <SimpleGrid cols={{ base: 1, sm: 2 }}>
         <Card
+          className="sm-card-hover"
           shadow="sm"
           padding="xl"
-          radius="md"
+          radius="lg"
           withBorder
           style={{ cursor: 'pointer' }}
           onClick={() => navigate('/programmes/nouveau')}
         >
-          <Group>
-            <ThemeIcon size={44} radius="md" variant="light" color="blue">
-              <IconTargetArrow size={26} />
-            </ThemeIcon>
-            <Title order={3}>Créer un programme</Title>
+          <Group justify="space-between">
+            <Group>
+              <ThemeIcon size={44} radius="md" variant="light" color="brand">
+                <IconTargetArrow size={26} />
+              </ThemeIcon>
+              <Title order={3}>Créer un programme</Title>
+            </Group>
+            <IconArrowRight size={20} color="var(--mantine-color-dimmed)" />
           </Group>
           <Text c="dimmed" mt="md">
             Un objectif structuré : matière(s), suivi de progression, heures
@@ -50,20 +60,23 @@ export default function HomePage() {
           </Text>
         </Card>
 
-        {/* Carte 2 : révision spontanée (sans mémoire) */}
         <Card
+          className="sm-card-hover"
           shadow="sm"
           padding="xl"
-          radius="md"
+          radius="lg"
           withBorder
           style={{ cursor: 'pointer' }}
           onClick={() => navigate('/revision')}
         >
-          <Group>
-            <ThemeIcon size={44} radius="md" variant="light" color="teal">
-              <IconBolt size={26} />
-            </ThemeIcon>
-            <Title order={3}>Révision spontanée</Title>
+          <Group justify="space-between">
+            <Group>
+              <ThemeIcon size={44} radius="md" variant="light" color="teal">
+                <IconBolt size={26} />
+              </ThemeIcon>
+              <Title order={3}>Révision spontanée</Title>
+            </Group>
+            <IconArrowRight size={20} color="var(--mantine-color-dimmed)" />
           </Group>
           <Text c="dimmed" mt="md">
             Juste réviser, tout de suite, sans rien configurer. Accès direct
@@ -72,34 +85,28 @@ export default function HomePage() {
         </Card>
       </SimpleGrid>
 
-      {/* Accès rapide : reprendre un programme existant (masqué s'il n'y en a pas) */}
+      {/* ---- Accès rapide aux programmes existants ---- */}
       {programmes && programmes.length > 0 && (
-        <Stack gap="xs" mt="lg">
+        <Stack gap="sm">
           <Text fw={600}>Reprendre un programme</Text>
           <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }}>
             {programmes.map((programme) => (
               <Card
                 key={programme.id}
+                className="sm-card-hover"
                 shadow="xs"
                 padding="md"
-                radius="md"
+                radius="lg"
                 withBorder
                 style={{ cursor: 'pointer' }}
                 onClick={() => navigate(`/programmes/${programme.id}`)}
               >
-                <Text fw={600} truncate>
-                  {programme.name}
-                </Text>
+                <Text fw={600} truncate>{programme.name}</Text>
                 <Group gap={6} mt="xs">
-                  <Badge
-                    variant="light"
-                    color={programme.trackingType === 'GRADES' ? 'blue' : 'teal'}
-                  >
+                  <Badge variant="light" color={programme.trackingType === 'GRADES' ? 'brand' : 'teal'}>
                     {programme.trackingType === 'GRADES' ? 'Notes /20' : 'Ressenti'}
                   </Badge>
-                  <Badge variant="light" color="gray">
-                    {programme.targetHours} h
-                  </Badge>
+                  <Badge variant="light" color="gray">{programme.targetHours} h</Badge>
                 </Group>
               </Card>
             ))}

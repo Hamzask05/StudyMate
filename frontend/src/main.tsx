@@ -11,6 +11,8 @@ import { createRoot } from 'react-dom/client';
 
 // Le CSS de Mantine (importé une seule fois, ici, pour toute l'app)
 import '@mantine/core/styles.css';
+// Nos styles d'interaction réutilisables
+import './styles/ui.css';
 
 import { MantineProvider } from '@mantine/core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

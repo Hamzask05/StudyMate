@@ -1,5 +1,5 @@
 // ============================================================================
-// ProgrammesPage — la liste des programmes créés (mode "avec mémoire").
+// ProgrammesPage — la liste des programmes (mode "avec mémoire").
 // ============================================================================
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -14,9 +14,10 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import { IconPlus, IconTrash } from '@tabler/icons-react';
+import { IconPlus, IconTargetArrow, IconTrash } from '@tabler/icons-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { deleteProgramme, fetchProgrammes } from '../api/programmes';
+import EmptyState from '../components/EmptyState';
 
 export default function ProgrammesPage() {
   const navigate = useNavigate();
@@ -43,15 +44,25 @@ export default function ProgrammesPage() {
       {isPending && <Loader />}
 
       {programmes && programmes.length === 0 && (
-        <Text c="dimmed">Aucun programme pour l'instant.</Text>
+        <EmptyState
+          icon={IconTargetArrow}
+          title="Aucun programme pour l'instant"
+          description="Crée ton premier programme pour organiser tes révisions autour d'un objectif."
+          action={
+            <Button component={Link} to="/programmes/nouveau" leftSection={<IconPlus size={16} />}>
+              Créer un programme
+            </Button>
+          }
+        />
       )}
 
       {programmes?.map((programme) => (
         <Card
           key={programme.id}
+          className="sm-card-hover"
           shadow="sm"
           padding="md"
-          radius="md"
+          radius="lg"
           withBorder
           style={{ cursor: 'pointer' }}
           onClick={() => navigate(`/programmes/${programme.id}`)}
@@ -60,21 +71,14 @@ export default function ProgrammesPage() {
             <div>
               <Group gap="xs">
                 <Text fw={600}>{programme.name}</Text>
-                <Badge variant="light" color={programme.trackingType === 'GRADES' ? 'blue' : 'teal'}>
+                <Badge variant="light" color={programme.trackingType === 'GRADES' ? 'brand' : 'teal'}>
                   {programme.trackingType === 'GRADES' ? 'Notes /20' : 'Ressenti'}
                 </Badge>
-                <Badge variant="light" color="gray">
-                  {programme.targetHours} h visées
-                </Badge>
+                <Badge variant="light" color="gray">{programme.targetHours} h</Badge>
               </Group>
               <Group gap={6} mt="xs">
                 {programme.subjects.map((s) => (
-                  <Badge
-                    key={s.id}
-                    variant="dot"
-                    color={s.color}
-                    styles={{ root: { textTransform: 'none' } }}
-                  >
+                  <Badge key={s.id} variant="dot" color={s.color} styles={{ root: { textTransform: 'none' } }}>
                     {s.name}
                   </Badge>
                 ))}
