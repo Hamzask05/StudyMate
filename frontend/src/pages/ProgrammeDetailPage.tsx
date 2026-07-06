@@ -25,6 +25,7 @@ import {
 import {
   IconArrowLeft,
   IconCalendarEvent,
+  IconCards,
   IconChartLine,
   IconChecklist,
   IconClock,
@@ -40,6 +41,7 @@ import TaskItem from '../components/TaskItem';
 import ProgressSection from '../components/ProgressSection';
 import RevisionNotes from '../components/RevisionNotes';
 import Deadlines from '../components/Deadlines';
+import Flashcards from '../components/Flashcards';
 import PomodoroTimer from '../components/timer/PomodoroTimer';
 import { usePomodoroTimer } from '../context/PomodoroContext';
 
@@ -228,6 +230,12 @@ export default function ProgrammeDetailPage() {
           </Card>
         </Stack>
       </SimpleGrid>
+
+      {/* Flashcards (pleine largeur) */}
+      <Card shadow="sm" padding="lg" radius="lg" withBorder>
+        <SectionTitle icon={IconCards}>Flashcards</SectionTitle>
+        <Flashcards programmeId={programme.id} />
+      </Card>
 
       {/* Échéances (pleine largeur) */}
       <Card shadow="sm" padding="lg" radius="lg" withBorder>

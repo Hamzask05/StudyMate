@@ -44,7 +44,7 @@ public class DeadlineController {
     @GetMapping
     public List<Deadline> all(@RequestParam(required = false) Long programmeId) {
         if (programmeId != null) {
-            return repository.findByProgrammeIdOrderByDueDateAsc(programmeId);
+            return repository.findForProgramme(programmeId);
         }
         return repository.findAllByOrderByDueDateAsc();
     }

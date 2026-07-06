@@ -14,6 +14,7 @@ import ProgrammeDetailPage from './pages/ProgrammeDetailPage';
 import SpontaneousPage from './pages/SpontaneousPage';
 import SubjectsPage from './pages/SubjectsPage';
 import DeadlinesPage from './pages/DeadlinesPage';
+import FlashcardsPage from './pages/FlashcardsPage';
 import PomodoroPage from './pages/PomodoroPage';
 
 export default function App() {
@@ -32,6 +33,7 @@ export default function App() {
           <Route path="/programmes/:id" element={<ProgrammeDetailPage />} />
           <Route path="/matieres" element={<SubjectsPage />} />
           <Route path="/echeances" element={<DeadlinesPage />} />
+          <Route path="/flashcards" element={<FlashcardsPage />} />
           <Route path="/pomodoro" element={<PomodoroPage />} />
         </Route>
       </Routes>

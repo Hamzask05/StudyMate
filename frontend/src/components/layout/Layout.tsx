@@ -9,7 +9,7 @@
 // ============================================================================
 
 import { AppShell, Group, NavLink, Text, ThemeIcon } from '@mantine/core';
-import { IconBook, IconCalendarEvent, IconClock, IconHome, IconTargetArrow } from '@tabler/icons-react';
+import { IconBook, IconCalendarEvent, IconCards, IconClock, IconHome, IconTargetArrow } from '@tabler/icons-react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import FloatingTimer from '../timer/FloatingTimer';
 import FocusOverlay from '../timer/FocusOverlay';
@@ -20,6 +20,7 @@ import FocusOverlay from '../timer/FocusOverlay';
 const navItems = [
   { label: 'Accueil', path: '/app', icon: IconHome },
   { label: 'Programmes', path: '/programmes', icon: IconTargetArrow },
+  { label: 'Flashcards', path: '/flashcards', icon: IconCards },
   { label: 'Échéances', path: '/echeances', icon: IconCalendarEvent },
   { label: 'Matières', path: '/matieres', icon: IconBook },
   { label: 'Pomodoro', path: '/pomodoro', icon: IconClock },
