@@ -1,32 +1,39 @@
-/* Styles de la page d'accueil marketing (landing SaaS). */
+/* Styles de la page d'accueil marketing (landing SaaS) — mode sombre. */
 
 .landing-hero {
   background:
-    radial-gradient(55% 55% at 50% 0%, rgba(124, 58, 237, 0.12), transparent 70%),
-    linear-gradient(180deg, #faf5ff 0%, #ffffff 70%);
+    radial-gradient(60% 50% at 50% -8%, rgba(124, 58, 237, 0.28), transparent 70%),
+    radial-gradient(40% 40% at 85% 10%, rgba(5, 150, 105, 0.12), transparent 70%),
+    var(--mantine-color-body);
 }
 
 .landing-nav {
   position: sticky;
   top: 0;
   z-index: 50;
-  backdrop-filter: saturate(180%) blur(8px);
-  background: rgba(255, 255, 255, 0.8);
-  border-bottom: 1px solid var(--mantine-color-gray-2);
+  backdrop-filter: saturate(160%) blur(10px);
+  background: rgba(17, 19, 24, 0.72);
+  border-bottom: 1px solid var(--mantine-color-dark-4);
 }
 
-/* Léger soulèvement au survol des cartes de fonctionnalités */
+/* Léger soulèvement + halo au survol des cartes de fonctionnalités */
 .feature-card {
   transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
 }
 .feature-card:hover {
   transform: translateY(-4px);
-  box-shadow: var(--mantine-shadow-md);
-  border-color: var(--mantine-color-brand-3);
+  box-shadow: 0 10px 30px -12px rgba(124, 58, 237, 0.35);
+  border-color: var(--mantine-color-brand-6);
 }
 
 .cta-band {
-  background: linear-gradient(135deg, #6d28d9 0%, #7c3aed 50%, #059669 160%);
+  background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 50%, #059669 170%);
+  box-shadow: 0 20px 60px -20px rgba(124, 58, 237, 0.5);
+}
+
+/* Halo violet doux (aperçu produit du hero, boutons clés) */
+.glow {
+  box-shadow: 0 12px 40px -12px rgba(124, 58, 237, 0.45);
 }
 
 /* Respect de la préférence "réduire les animations" (accessibilité) */

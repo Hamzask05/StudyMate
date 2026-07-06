@@ -160,7 +160,7 @@ export default function LandingPage() {
             </Stack>
 
             {/* Aperçu produit stylisé */}
-            <Card shadow="xl" radius="lg" withBorder p="lg" visibleFrom="md">
+            <Card className="glow" shadow="xl" radius="lg" withBorder p="lg" visibleFrom="md">
               <Group justify="space-between" mb="md">
                 <Text fw={700}>Préparation partiel maths</Text>
                 <Badge variant="light">Notes /20</Badge>
@@ -176,8 +176,8 @@ export default function LandingPage() {
                 <Stack gap={6} style={{ flex: 1 }}>
                   <Text size="sm" c="dimmed">Cette semaine</Text>
                   <Group justify="space-between"><Text size="sm">Heures</Text><Text size="sm" fw={600}>6,5 / 10 h</Text></Group>
-                  <Box h={6} bg="gray.2" style={{ borderRadius: 4 }}>
-                    <Box h={6} w="65%" bg="brand.6" style={{ borderRadius: 4 }} />
+                  <Box h={6} bg="dark.5" style={{ borderRadius: 4 }}>
+                    <Box h={6} w="65%" bg="brand.5" style={{ borderRadius: 4 }} />
                   </Box>
                   <Group justify="space-between" mt="xs"><Text size="sm">Tâches</Text><Text size="sm" fw={600}>4 / 6</Text></Group>
                   <Group gap={6} mt="xs">
@@ -214,7 +214,7 @@ export default function LandingPage() {
       </Container>
 
       {/* ---- Fonctionnement ---- */}
-      <Box bg="gray.0" py={{ base: 48, sm: 72 }} id="how">
+      <Box bg="dark.8" py={{ base: 48, sm: 72 }} id="how">
         <Container size="lg">
           <Stack align="center" gap="xs" mb="xl">
             <Title order={2} ta="center">Comment ça marche</Title>

@@ -48,7 +48,6 @@ export default function FlashcardCard({ flashcard, onDelete, showProgramme }: Fl
       {/* Contenu : question ou réponse selon l'état */}
       <Text
         fw={revealed ? 400 : 600}
-        c={revealed ? undefined : 'dark'}
         style={{ flex: 1, whiteSpace: 'pre-wrap' }}
       >
         {revealed ? flashcard.answer : flashcard.question}
