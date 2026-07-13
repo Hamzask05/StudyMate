@@ -32,7 +32,7 @@ const queryClient = new QueryClient();
 // <StrictMode> : mode développement qui signale les erreurs courantes.
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <MantineProvider theme={theme} forceColorScheme="dark">
+    <MantineProvider theme={theme} defaultColorScheme="dark">
       <QueryClientProvider client={queryClient}>
         {/* PomodoroProvider : le minuteur global, sous QueryClient (il
             enregistre les sessions) et au-dessus de l'app entière. */}

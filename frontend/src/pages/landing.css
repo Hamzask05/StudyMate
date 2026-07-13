@@ -12,8 +12,16 @@
   top: 0;
   z-index: 50;
   backdrop-filter: saturate(160%) blur(10px);
-  background: rgba(17, 19, 24, 0.72);
-  border-bottom: 1px solid var(--mantine-color-dark-4);
+  background: light-dark(rgba(255, 255, 255, 0.72), rgba(17, 19, 24, 0.72));
+  border-bottom: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+}
+
+/* Bandes/pistes qui s'adaptent au thème clair/sombre */
+.landing-section {
+  background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-8));
+}
+.landing-track {
+  background: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
 }
 
 /* Léger soulèvement + halo au survol des cartes de fonctionnalités */

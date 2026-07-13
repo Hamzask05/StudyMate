@@ -8,11 +8,48 @@
 // (/ → TasksPage, /pomodoro → PomodoroPage, ...).
 // ============================================================================
 
-import { AppShell, Group, NavLink, Text, ThemeIcon } from '@mantine/core';
-import { IconBook, IconCalendarEvent, IconCards, IconClock, IconHome, IconTargetArrow } from '@tabler/icons-react';
+import {
+  ActionIcon,
+  AppShell,
+  Group,
+  NavLink,
+  Text,
+  ThemeIcon,
+  Tooltip,
+  useMantineColorScheme,
+} from '@mantine/core';
+import {
+  IconBook,
+  IconCalendarEvent,
+  IconCards,
+  IconClock,
+  IconHome,
+  IconMoon,
+  IconSun,
+  IconTargetArrow,
+} from '@tabler/icons-react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import FloatingTimer from '../timer/FloatingTimer';
 import FocusOverlay from '../timer/FocusOverlay';
+
+// Bouton de bascule clair / sombre (réutilisable).
+export function ColorSchemeToggle() {
+  const { colorScheme, setColorScheme } = useMantineColorScheme();
+  const dark = colorScheme === 'dark';
+  return (
+    <Tooltip label={dark ? 'Passer en clair' : 'Passer en sombre'} withArrow>
+      <ActionIcon
+        variant="default"
+        size="lg"
+        radius="md"
+        aria-label="Basculer le thème clair/sombre"
+        onClick={() => setColorScheme(dark ? 'light' : 'dark')}
+      >
+        {dark ? <IconSun size={18} /> : <IconMoon size={18} />}
+      </ActionIcon>
+    </Tooltip>
+  );
+}
 
 // La liste des entrées du menu : ajouter une page = ajouter une ligne ici.
 // Tâches et Progression ne sont plus dans le menu : elles se gèrent désormais
@@ -41,15 +78,18 @@ export default function Layout() {
       padding="lg"
     >
       <AppShell.Header p="md">
-        {/* Logo cliquable vers l'accueil de l'app */}
-        <Link to="/app" style={{ textDecoration: 'none', color: 'inherit', width: 'fit-content' }}>
-          <Group gap={8}>
-            <ThemeIcon size={26} radius="md" variant="gradient" gradient={{ from: 'brand.6', to: 'success.6', deg: 135 }}>
-              <IconBook size={16} />
-            </ThemeIcon>
-            <Text fw={800} fz="lg">StudyMate</Text>
-          </Group>
-        </Link>
+        <Group justify="space-between" h="100%">
+          {/* Logo cliquable vers l'accueil de l'app */}
+          <Link to="/app" style={{ textDecoration: 'none', color: 'inherit', width: 'fit-content' }}>
+            <Group gap={8}>
+              <ThemeIcon size={26} radius="md" variant="gradient" gradient={{ from: 'brand.6', to: 'success.6', deg: 135 }}>
+                <IconBook size={16} />
+              </ThemeIcon>
+              <Text fw={800} fz="lg">StudyMate</Text>
+            </Group>
+          </Link>
+          <ColorSchemeToggle />
+        </Group>
       </AppShell.Header>
 
       <AppShell.Navbar p="sm">
@@ -68,9 +108,13 @@ export default function Layout() {
         ))}
       </AppShell.Navbar>
 
-      {/* La zone centrale : React Router y affiche la page de l'URL courante */}
+      {/* La zone centrale : React Router y affiche la page de l'URL courante.
+          La clé = l'URL → le contenu se remonte à chaque navigation, ce qui
+          rejoue l'animation de fondu (transition de page). */}
       <AppShell.Main>
-        <Outlet />
+        <div key={location.pathname} className="route-fade">
+          <Outlet />
+        </div>
       </AppShell.Main>
 
       {/* Pastille flottante du minuteur, présente sur toutes les pages */}

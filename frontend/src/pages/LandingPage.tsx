@@ -30,6 +30,7 @@ import {
   IconTargetArrow,
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
+import { ColorSchemeToggle } from '../components/layout/Layout';
 import './landing.css';
 
 const FEATURES = [
@@ -108,11 +109,15 @@ export default function LandingPage() {
             <Group gap="sm" visibleFrom="xs">
               <Anchor href="#features" c="dimmed" fw={500} underline="never">Fonctionnalités</Anchor>
               <Anchor href="#how" c="dimmed" fw={500} underline="never">Fonctionnement</Anchor>
+              <ColorSchemeToggle />
               <Button onClick={openApp} rightSection={<IconArrowRight size={16} />}>
                 Ouvrir l'app
               </Button>
             </Group>
-            <Button hiddenFrom="xs" size="sm" onClick={openApp}>Ouvrir</Button>
+            <Group gap="xs" hiddenFrom="xs">
+              <ColorSchemeToggle />
+              <Button size="sm" onClick={openApp}>Ouvrir</Button>
+            </Group>
           </Group>
         </Container>
       </Box>
@@ -176,7 +181,7 @@ export default function LandingPage() {
                 <Stack gap={6} style={{ flex: 1 }}>
                   <Text size="sm" c="dimmed">Cette semaine</Text>
                   <Group justify="space-between"><Text size="sm">Heures</Text><Text size="sm" fw={600}>6,5 / 10 h</Text></Group>
-                  <Box h={6} bg="dark.5" style={{ borderRadius: 4 }}>
+                  <Box h={6} className="landing-track" style={{ borderRadius: 4 }}>
                     <Box h={6} w="65%" bg="brand.5" style={{ borderRadius: 4 }} />
                   </Box>
                   <Group justify="space-between" mt="xs"><Text size="sm">Tâches</Text><Text size="sm" fw={600}>4 / 6</Text></Group>
@@ -214,7 +219,7 @@ export default function LandingPage() {
       </Container>
 
       {/* ---- Fonctionnement ---- */}
-      <Box bg="dark.8" py={{ base: 48, sm: 72 }} id="how">
+      <Box className="landing-section" py={{ base: 48, sm: 72 }} id="how">
         <Container size="lg">
           <Stack align="center" gap="xs" mb="xl">
             <Title order={2} ta="center">Comment ça marche</Title>

@@ -17,6 +17,7 @@ import {
 import { IconArrowRight, IconBolt, IconTargetArrow } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { fetchProgrammes } from '../api/programmes';
+import DashboardStats from '../components/DashboardStats';
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -32,6 +33,9 @@ export default function HomePage() {
         <Title order={2}>Bonjour</Title>
         <Text c="dimmed">Comment veux-tu réviser aujourd'hui ?</Text>
       </div>
+
+      {/* ---- Tableau de bord : stats de révision ---- */}
+      <DashboardStats />
 
       {/* ---- Les deux modes ---- */}
       <SimpleGrid cols={{ base: 1, sm: 2 }}>
